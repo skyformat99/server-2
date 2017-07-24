@@ -51,9 +51,14 @@ pipeline:
       - composer require --dev "etsy/phan:dev-master"
       - ./lib/composer/etsy/phan/phan -k build/.phan/config.php
       - php ./build/.phan/plugin-checker.php
+  php-cs-fixer:
+    image: nextcloudci/php7.1:php7.1-12
+    commands:
+      - rm /etc/php/7.1/cli/conf.d/20-xdebug.ini
+      - ./build/php-cs-fixer.sh --dry-run
     when:
       matrix:
-        TESTS: phan
+        TESTS: php-cs-fixer
   litmus-v1:
     image: nextcloudci/litmus-php7.0:litmus-php7.0-4
     commands:
@@ -586,6 +591,7 @@ matrix:
     - TESTS: syntax-php7.0
     - TESTS: syntax-php7.1
     - TESTS: phan
+    - TESTS: php-cs-fixer
     - TESTS: litmus-v1
     - TESTS: litmus-v2
     - TESTS: caldavtester-old-endpoint
